@@ -3,7 +3,7 @@ import random
 ## Set up the building blocks
 OPERATORS = ['+', '-' , '*', '/'] #non-terminal
 VARIABLES = ['x'] #terminal --> No chid nodes. 
-CONSTANTS = range(-4,4) #terminal
+CONSTANTS = range(-1,1) #terminal
 
 ## Set up a function that picks a random terminal (constant or variable)
 def pick_random_terminal():
@@ -28,6 +28,49 @@ def grow(level, max_depth): #start from a certain depth level e.g. where depth =
 
 
 ##tree = grow(0, 2)
-tree = grow(0,3)
-print(tree)
+#tree = grow(0,3)
+#print(tree)
 
+def traversal(node, x):
+    #We can't the final step without knowing thats in the left tree and whats on the right tree. Recursively
+    # base case 1: the variable
+    if node == 'x':
+        return x
+
+    # base case 2: a constant
+    if type(node) == int or type(node) == float:
+        return node
+
+    # recursive case: unpack the operator tuple
+    operator = node[0]
+    left = node[1]
+    right = node[2]
+
+
+    # get the left answer and the right answer (recursion!)
+    left_result = traversal(left, x)
+    right_result = traversal(right, x)
+
+    # check which operator it is, do that math, return it
+    if operator == '+':
+        return left_result + right_result
+    elif operator == '-':
+        return left_result - right_result
+    elif operator == '*':
+        return left_result * right_result
+    elif operator == '/':
+        if right_result == 0:
+            return 1 #return 1 if the denominator is 0
+        else:
+            return left_result / right_result
+
+        
+if __name__ == "__main__":
+    test = ('-', ('*', 'x', 2), ('/', 'x', 'x'))
+    print(traversal(test, 3))       # should print 5
+
+    test2 = ('+', ('*', 'x', 'x'), 3)
+    print(traversal(test2, 2))      # should print 7
+
+    div_zero = ('/', 'x', ('-', 'x', 'x'))
+    print(traversal(div_zero, 4))   # should print 1

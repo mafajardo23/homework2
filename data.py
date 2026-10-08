@@ -1,7 +1,6 @@
 import csv
 
-inp = []
-out = []
+data_pairs = []
 
 with open("dataset1.csv") as data_file:
     read = csv.reader(data_file)
@@ -9,7 +8,5 @@ with open("dataset1.csv") as data_file:
     for row in read:
         x = float(row[0])
         y = float(row[1])
-        inp.append(x)
-        out.append(y)
+        data_pairs.append((x,y))
 
-print(len(inp))   # should be 25000
