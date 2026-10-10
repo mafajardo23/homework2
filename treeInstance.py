@@ -64,6 +64,9 @@ def traversal(node, x):
         else:
             return left_result / right_result
 
+def reproduction(tree):
+    return tree
+
         
 if __name__ == "__main__":
     test = ('-', ('*', 'x', 2), ('/', 'x', 'x'))
