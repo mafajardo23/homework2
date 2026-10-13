@@ -31,19 +31,6 @@ def get_tree_paths(tree, current_path = [], paths = None):
 
 
 
-## Call paths for parent 1:
-paths_parent1 = get_tree_paths(parent1)
-
-# Pick a random path to crossover
-path1 = random.choice(paths_parent1)
-
-
-## Call paths for parent 2:
-paths_parent2 = get_tree_paths(parent2)
-
-# Pick a random path to crossover
-path2 = random.choice(paths_parent2)
-
 
 ## Swap the subtrees at the paths from the two trees
 
@@ -53,36 +40,50 @@ def retrieve_subtree(tree, path):
         node = tree[i]
     return node
 
-subtree1 = retrieve_subtree(parent1, path1)
-subtree2 = retrieve_subtree(parent2, path2)
+#subtree1 = retrieve_subtree(parent1, path1)
+#subtree2 = retrieve_subtree(parent2, path2)
 
 
 # Second, then swap the subtrees
 def swap_subtrees(tree, path, new_subtree):
 
     #we want to edit the tree but its a tuple, so change it to a list
-    node = to_list(tree)
+    #node = to_list(tree)
+
+    node = tree
 
     for i in path[:-1]:
         node = node[i]
 
     #Then set the subtree at that spot equal to the new piece: 
     node[path[-1]] = new_subtree
+    return node[path[-1]]
 
 
 def crossover(parent1, parent2):
     ## Call paths for parent 1:
     paths_parent1 = get_tree_paths(parent1)
-
     # Pick a random path to crossover
     path1 = random.choice(paths_parent1)
 
 
     ## Call paths for parent 2:
     paths_parent2 = get_tree_paths(parent2)
-
     # Pick a random path to crossover
     path2 = random.choice(paths_parent2)
 
+    #Find the subtrees at the paths: 
+    subtree1 = retrieve_subtree(parent1, path1)
+    subtree2 = retrieve_subtree(parent2, path2)
 
+
+    #Make copies of the parent trees to turn them into lists that are editable
+    parent1_copy = to_list(parent1)
+    parent2_copy = to_list(parent2)
+
+    #call the swap_subtrees function: 
+    child1 = swap_subtrees(parent1_copy, path1, subtree2)
+    child2 =  swap_subtrees(parent2_copy, path2, subtree1)
+
+    return to_tuple(child1), to_tuple(child2)
 
