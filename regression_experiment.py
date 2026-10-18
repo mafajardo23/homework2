@@ -157,3 +157,9 @@ best_per_generation.sort(key=lambda pair: pair[0])
 best_overall = best_per_generation[0]
 print("Best overall:", best_overall[0], best_overall[1])
 
+
+
+
+
+
+    
