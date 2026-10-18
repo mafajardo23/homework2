@@ -11,6 +11,7 @@ Use helper functions to pick the trees, and get the paths.
 """
 
 import random
+from treeInstance import grow
 
 ## Determine the paths of the trees (think of them as indices)
 def get_tree_paths(tree, current_path = [], paths = None):
@@ -112,6 +113,15 @@ def crossover(parent1, parent2):
 
 
 
-#p1 = ('+', ('*', 'x', 2), 'y')
-#p2 = ('-', 3, ('+', 'x', 1))
-#print(crossover(p1, p2))
+#Mutation function:
+def mutate(tree):
+    paths = get_tree_paths(tree)                  
+    path = random.choice(paths)                
+    new_subtree = grow(0, random.randint(0, 2))    
+    return swap_subtrees(tree, path, new_subtree) 
+
+
+
+#Reproduction function:
+def reproduction(tree):
+    return tree

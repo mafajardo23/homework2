@@ -3,7 +3,9 @@ import random
 ## Set up the building blocks
 OPERATORS = ['+', '-' , '*', '/'] #non-terminal
 VARIABLES = ['x'] #terminal --> No chid nodes. 
-CONSTANTS = range(-1,1) #terminal
+#CONSTANTS = range(-1,1) #terminal --> This range only returns either -1 or 0. So, increase the range. 
+CONSTANTS = range(-4,4)
+
 
 ## Set up a function that picks a random terminal (constant or variable)
 def pick_random_terminal():
@@ -63,9 +65,6 @@ def traversal(node, x):
             return 1 #return 1 if the denominator is 0
         else:
             return left_result / right_result
-
-def reproduction(tree):
-    return tree
 
         
 if __name__ == "__main__":

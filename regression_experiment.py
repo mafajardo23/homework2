@@ -98,7 +98,8 @@ def make_new_population(fit_pairs, num_parents):
     #assigning parents
     cross_parents = parents[:num_cross]
     repro_parents = parents[num_cross : num_cross + num_reprod]
-    mut_parents   = parents[num_cross + num_reprod :]
+    mut_parents   = parents[num_cross + num_reprod : num_cross + num_reprod + num_mutate] #mutate starts where reproduction ended, and takes num_mutate parents
+    
 
     #crossover (90%)
     for i in range(0, num_cross, 2):
@@ -108,7 +109,7 @@ def make_new_population(fit_pairs, num_parents):
 
     #reproduction (8%)
     for tree in repro_parents:
-        new_population.append(tree)
+        new_population.append(reproduction(tree))
 
     #mutation (2%)
     for tree in mut_parents:
