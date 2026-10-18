@@ -13,6 +13,8 @@ Use helper functions to pick the trees, and get the paths.
 import random
 from treeInstance import grow
 
+MAX_DEPTH = 8
+
 ## Determine the paths of the trees (think of them as indices)
 def get_tree_paths(tree, current_path = [], paths = None):
     if paths is None: 
@@ -41,8 +43,6 @@ def retrieve_subtree(tree, path):
 # Second, then swap the subtrees
 def swap_subtrees(tree, path, new_subtree):   #has to return the new tree which has been crossed over
  
-    #we want to edit the tree but its a tuple, so change it to a list
-    #node = to_list(tree)
     if path == []:
       return new_subtree
 
@@ -82,6 +82,14 @@ def to_tuple(tree):
     return tuple(tree_parts) #convert each list to a tuple. This is reflected in the recursion steps.
 
 
+#Function to check the depth of a tree --> Helps avoid bloating
+def tree_depth(tree, level = 0):
+    if isinstance(tree, tuple) == False: #If the tree is leaf, report how far down it is from the root
+        return level
+    left = tree_depth(tree[1], level + 1)
+    right = tree_depth(tree[2], level + 1)
+    return max(left, right) #return the level of the deepest leaf 
+
 
 
 def crossover(parent1, parent2):
@@ -108,8 +116,18 @@ def crossover(parent1, parent2):
     #call the swap_subtrees function: 
     child1 = swap_subtrees(parent1_copy, path1, subtree2)
     child2 =  swap_subtrees(parent2_copy, path2, subtree1)
+    
+    child1 = to_tuple(child1)
+    child2 = to_tuple(child2)
 
-    return to_tuple(child1), to_tuple(child2)
+    #Check if children depths exceed MAXIMUM DEPTH --> To solve the issue of bloating
+    if tree_depth(child1) > MAX_DEPTH: #If a child's depth is > max depth, return the parent node instead
+        child1 = parent1
+
+    if tree_depth(child2) > MAX_DEPTH:
+        child2 = parent2
+
+    return child1, child2
 
 
 
@@ -117,11 +135,32 @@ def crossover(parent1, parent2):
 def mutate(tree):
     paths = get_tree_paths(tree)                  
     path = random.choice(paths)                
-    new_subtree = grow(0, random.randint(0, 2))    
-    return swap_subtrees(tree, path, new_subtree) 
+    new_subtree = grow(0, random.randint(0, 2))  
+    tree_copy = to_list(tree)  
+    mutated_tree = swap_subtrees(tree_copy, path, new_subtree) 
+    mutated_tree = to_tuple(mutated_tree)
+
+    #Check mutated tree's depth against the MAX_DEPTH: 
+    if tree_depth(mutated_tree) > MAX_DEPTH:
+        return tree
+
+    return mutated_tree  #return the mutated tree otherwise
+
+    
 
 
 
 #Reproduction function:
 def reproduction(tree):
     return tree
+
+
+
+
+"""
+#Testing code: 
+t = ('+', ('*', 'x', 2), 'y')
+for run in range(15):
+    print(f"Run {run} | Mutated tree: {mutate(t)}")
+print(f"Original tree: {t}")
+"""

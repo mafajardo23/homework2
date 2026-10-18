@@ -1,7 +1,12 @@
 import csv
+import math
 from treeInstance import grow, traversal
 import random 
 from genetic_program import crossover, mutate, reproduction
+import os
+
+random.seed(int(os.environ.get("SLURM_ARRAY_TASK_ID", 0)))
+
 
 #Configurations
 data_pairs = []
@@ -10,7 +15,7 @@ TOURNAMENT_SIZE = 3
 POPULATION_SIZE = 200
 TARGET = 0.01
 MAX_ITERATIONS = 50
-PLATEU = 20
+PLATEAU = 20
 
 
 #Reading the data and storing it in a list as pairs (x, y)
@@ -42,7 +47,11 @@ def calculate_fitness(population, data_pairs):
         for x, y in data_pairs:
             test_output = traversal(tree, x)
             diff = y - test_output
-            total += diff ** 2
+            total += diff * diff     #diff ** 2
+
+            if not math.isfinite(total): #if we get a total thats not a real number i.e. inf or nan
+                total = float('inf')  #then give that tree the worst score 
+                break  #and stop checking it. i.e. no need to check other points because it already has a bad fitness score.
 
         fitness_value = total / len(data_pairs)
         fit_pairs.append((fitness_value, tree))
@@ -99,7 +108,7 @@ def make_new_population(fit_pairs, num_parents):
     cross_parents = parents[:num_cross]
     repro_parents = parents[num_cross : num_cross + num_reprod]
     mut_parents   = parents[num_cross + num_reprod : num_cross + num_reprod + num_mutate] #mutate starts where reproduction ended, and takes num_mutate parents
-    
+
 
     #crossover (90%)
     for i in range(0, num_cross, 2):
@@ -116,6 +125,7 @@ def make_new_population(fit_pairs, num_parents):
         new_population.append(mutate(tree))
 
     return new_population
+
 
 #CREATING THE POPULATION
 for i in range(POPULATION_SIZE):
@@ -140,8 +150,8 @@ while True:
         print("Found it!")
         break
 
-    if len(scores) > PLATEU: 
-        old = scores[generation - PLATEU] # score from PLATEU gens ago
+    if len(scores) > PLATEAU: 
+        old = scores[generation - PLATEAU] # score from PLATEAU gens ago
         new = scores[generation]    # score now
         if old - new < 0.01:   # check if it has barely improved
             print("Plateau reached")

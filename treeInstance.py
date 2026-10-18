@@ -4,7 +4,7 @@ import random
 OPERATORS = ['+', '-' , '*', '/'] #non-terminal
 VARIABLES = ['x'] #terminal --> No chid nodes. 
 #CONSTANTS = range(-1,1) #terminal --> This range only returns either -1 or 0. So, increase the range. 
-CONSTANTS = range(-4,4)
+CONSTANTS = range(-4,5)
 
 
 ## Set up a function that picks a random terminal (constant or variable)
@@ -66,7 +66,8 @@ def traversal(node, x):
         else:
             return left_result / right_result
 
-        
+
+"""     
 if __name__ == "__main__":
     test = ('-', ('*', 'x', 2), ('/', 'x', 'x'))
     print(traversal(test, 3))       # should print 5
@@ -76,3 +77,4 @@ if __name__ == "__main__":
 
     div_zero = ('/', 'x', ('-', 'x', 'x'))
     print(traversal(div_zero, 4))   # should print 1
+"""
