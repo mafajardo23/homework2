@@ -2,7 +2,7 @@ import csv
 import math
 from treeInstance import grow, traversal
 import random 
-from genetic_program import crossover, mutate, reproduction
+from genetic_program import crossover, mutate, reproduction, get_tree_paths
 import os
 
 random.seed(int(os.environ.get("SLURM_ARRAY_TASK_ID", 0)))
@@ -16,6 +16,8 @@ POPULATION_SIZE = 200
 TARGET = 0.01
 MAX_ITERATIONS = 50
 PLATEAU = 20
+PENALTY = 0.001
+TEST_PERCENT = 0.20 
 
 
 #Reading the data and storing it in a list as pairs (x, y)
@@ -27,11 +29,19 @@ with open("dataset1.csv") as data_file:
         y = float(row[1])
         data_pairs.append((x,y))
 
+test_data_size = int(len(data_pairs) * TEST_PERCENT) 
+
+test_data = data_pairs[:test_data_size]     # first 20% test set for later
+train_data = data_pairs[test_data_size:]   
 
 
-data_pairs = data_pairs[:2000]    
+def mean_squared_error(tree, data_pairs):
+    total = 0
+    for x, y in data_pairs:
+        diff = y - traversal(tree, x)
+        total += diff ** 2
+    return total / len(data_pairs)
 
-#Function 
 def calculate_fitness(population, data_pairs):
     """
     Function that takes in the list of the tree population, the pairs for
@@ -39,24 +49,13 @@ def calculate_fitness(population, data_pairs):
     population. Returns a list of pairs with the fitness value as first value
     and the tree as a second value. 
     """
+
     fit_pairs = []
-
     for tree in population:
-        total = 0
-
-        for x, y in data_pairs:
-            test_output = traversal(tree, x)
-            diff = y - test_output
-            total += diff * diff     #diff ** 2
-
-            if not math.isfinite(total): #if we get a total thats not a real number i.e. inf or nan
-                total = float('inf')  #then give that tree the worst score 
-                break  #and stop checking it. i.e. no need to check other points because it already has a bad fitness score.
-
-        fitness_value = total / len(data_pairs)
+        error = mean_squared_error(tree, data_pairs)
+    # add check if error is the same, add the penalty, if not then no. 
+        fitness_value = error + PENALTY * len(get_tree_paths(tree))       #sfavors smaller trees to control bloat and reduce overfitting
         fit_pairs.append((fitness_value, tree))
-
-
     return fit_pairs
 
 
@@ -168,6 +167,17 @@ best_per_generation.sort(key=lambda pair: pair[0])
 best_overall = best_per_generation[0]
 print("Best overall:", best_overall[0], best_overall[1])
 
+
+best_tree =  best_overall[1]
+best_train = mean_squared_error(best_tree, train_data)
+best_test = mean_squared_error(best_tree, test_data)
+
+limit = best_train * 1.5
+
+if best_test <= limit:
+    print("Not overfitting. Test set is relatively similar to best fit line of trained data")
+else:
+    print("Overfitting. test error is way bigger than the fit line, meaning its going directly to the points rather than the line of best fit  ")
 
 
 
