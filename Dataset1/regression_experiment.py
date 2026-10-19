@@ -1,8 +1,8 @@
 import csv
 import math
-from treeInstance import grow, traversal
+from Dataset1.treeInstance import grow, traversal
 import random 
-from genetic_program import crossover, mutate, reproduction, get_tree_paths
+from Dataset1.genetic_program import crossover, mutate, reproduction, get_tree_paths
 import os
 
 random.seed(int(os.environ.get("SLURM_ARRAY_TASK_ID", 0)))
@@ -15,7 +15,7 @@ TOURNAMENT_SIZE = 3
 POPULATION_SIZE = 200
 TARGET = 0.01
 MAX_ITERATIONS = 50
-PLATEAU = 20
+PLATEAU = 15
 PENALTY = 0.001
 TEST_PERCENT = 0.20 
 
