@@ -3,7 +3,6 @@ import random
 ## Set up the building blocks
 OPERATORS = ['+', '-' , '*', '/'] #non-terminal
 VARIABLES = ['x'] #terminal --> No chid nodes. 
-#CONSTANTS = range(-1,1) #terminal --> This range only returns either -1 or 0. So, increase the range. 
 CONSTANTS = range(-4,5)
 
 
