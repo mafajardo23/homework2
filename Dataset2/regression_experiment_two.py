@@ -14,9 +14,9 @@ random.seed(int(os.environ.get("SLURM_ARRAY_TASK_ID", 0)))
 data_pairs = []
 population = []
 TOURNAMENT_SIZE = 3
-POPULATION_SIZE = 50
+POPULATION_SIZE = 200
 TARGET = 0.01
-MAX_ITERATIONS = 20
+MAX_ITERATIONS = 50
 PLATEAU = 15
 TEST_PERCENT = 0.20 
 
