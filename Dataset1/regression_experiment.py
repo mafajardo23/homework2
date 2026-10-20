@@ -185,6 +185,9 @@ best_tree =  best_overall[1]
 best_train = mean_squared_error(best_tree, train_data)
 best_test = mean_squared_error(best_tree, test_data)
 
+#Error check 
+print("Train error", best_train, "Test error", best_test)
+
 limit = best_train * 1.5
 
 if best_test <= limit:
