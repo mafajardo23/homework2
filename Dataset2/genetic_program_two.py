@@ -11,7 +11,7 @@ Use helper functions to pick the trees, and get the paths.
 """
 
 import random
-from Dataset1.treeInstance import grow
+from Dataset2.treeInstance_two import grow
 
 MAX_DEPTH = 8
 

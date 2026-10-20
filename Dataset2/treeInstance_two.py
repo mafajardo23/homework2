@@ -2,7 +2,7 @@ import random
 
 ## Set up the building blocks
 OPERATORS = ['+', '-' , '*', '/'] #non-terminal
-VARIABLES = ['x'] #terminal --> No chid nodes. 
+VARIABLES = ['x1', 'x2', 'x3'] #terminal --> No chid nodes. 
 CONSTANTS = range(-4,5)
 
 
@@ -35,8 +35,8 @@ def grow(level, max_depth): #start from a certain depth level e.g. where depth =
 def traversal(node, x):
     #We can't the final step without knowing thats in the left tree and whats on the right tree. Recursively
     # base case 1: the variable
-    if node == 'x':
-        return x
+    if node in VARIABLES:
+        return x[VARIABLES.index(node)]  
 
     # base case 2: a constant
     if type(node) == int or type(node) == float:
