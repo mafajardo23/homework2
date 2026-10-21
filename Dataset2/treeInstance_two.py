@@ -65,15 +65,3 @@ def traversal(node, x):
         else:
             return left_result / right_result
 
-
-"""     
-if __name__ == "__main__":
-    test = ('-', ('*', 'x', 2), ('/', 'x', 'x'))
-    print(traversal(test, 3))       # should print 5
-
-    test2 = ('+', ('*', 'x', 'x'), 3)
-    print(traversal(test2, 2))      # should print 7
-
-    div_zero = ('/', 'x', ('-', 'x', 'x'))
-    print(traversal(div_zero, 4))   # should print 1
-"""
