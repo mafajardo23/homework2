@@ -1,11 +1,13 @@
 import csv
 import math
-from Dataset1.treeInstance import grow, traversal
+from Dataset1.treeInstance import grow, traversal, to_formula
 import random
 from Dataset1.genetic_program import crossover, mutate, reproduction, get_tree_paths
 import os
 
-random.seed(int(os.environ.get("SLURM_ARRAY_TASK_ID", 0)))
+seed = int(os.environ.get("SLURM_ARRAY_TASK_ID", 0))
+random.seed(seed)
+# Store the seed number since we'll use it to display the runs in the results table.
 
 
 #Configurations
@@ -159,6 +161,7 @@ while True:
     #if the best tree reached the target, done
     if best_tree[0] < TARGET:                        
         print("Found it!")
+        stop_reason = "Target found"
         break
 
     if len(scores) > PLATEAU:
@@ -166,10 +169,12 @@ while True:
         new = scores[generation]    # score now
         if old - new < 0.01:   # check if it has barely improved
             print("Plateau reached")
+            stop_reason = "Plateau reached"
             break
 
     if generation >= MAX_ITERATIONS:
         print("Max iterations reached")
+        stop_reason = "Max iterations"
         break
 
     population = make_new_population(fit_pairs, POPULATION_SIZE)
@@ -184,6 +189,8 @@ print(generation, best_tree[0], best_tree[1], "unique:", len(set(population)))  
 best_tree =  best_overall[1]
 best_train = mean_squared_error(best_tree, train_data)
 best_test = mean_squared_error(best_tree, test_data)
+best_full = mean_squared_error(best_tree, data_pairs) #reporting for the full tree; will compare against best_test
+best_train_test_diff = best_train - best_test
 
 #Error check 
 print("Train error", best_train, "Test error", best_test)
@@ -194,3 +201,12 @@ if best_test <= limit:
     print("Not overfitting. Test set is relatively similar to best fit line of trained data")
 else:
     print("Overfitting. test error is way bigger than the fit line, meaning its going directly to the points rather than the line of best fit  ")
+
+
+
+
+# Since the slurm runs are separate, we'll need to save the results of each run so we can add it to the results table: 
+with open(f"results/run_{seed}.csv", "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["run", "formula", "train_mse", "test_mse", "train_test_diff", "full_mse", "unique", "stop_reason"])
+    writer.writerow([seed, to_formula(best_tree), best_train, best_test, best_train_test_diff, best_full, len(set(population)), stop_reason])

@@ -3,7 +3,6 @@ import random
 ## Set up the building blocks
 OPERATORS = ['+', '-' , '*', '/'] #non-terminal
 VARIABLES = ['x1', 'x2', 'x3'] #terminal --> No chid nodes. 
-CONSTANTS = range(-4,5)
 
 
 ## Set up a function that picks a random terminal (constant or variable)
@@ -13,7 +12,7 @@ def pick_random_terminal():
     ## Let's start with a fair coin; we can change this if we find that there are more x's than values
     if random.random() < 0.5: ##the first half (heads)
         return random.choice(VARIABLES) #pick a variable
-    return random.choice(CONSTANTS) #else, pick a constant
+    return round(random.uniform(-90, 90), 4)#else, pick a constant: which is between -90 and 90, and is a decimal. 
 
 ## Assemble the tree using operators and terminals
 ## MAX_DEPTH = 2
@@ -65,3 +64,10 @@ def traversal(node, x):
         else:
             return left_result / right_result
 
+
+# convert the tree into the string formula so we can display it in the results table
+def to_formula(tree):
+    if isinstance(tree, tuple) == False:
+        return str(tree)
+    operator, left, right = tree
+    return "(" + to_formula(left) + " " + operator + " " + to_formula(right) + ")"
