@@ -66,6 +66,14 @@ def traversal(node, x):
             return left_result / right_result
 
 
+
+# convert the tree into the string formula so we can display it in the results table
+def to_formula(tree):
+    if isinstance(tree, tuple) == False:
+        return str(tree)
+    operator, left, right = tree
+    return "(" + to_formula(left) + " " + operator + " " + to_formula(right) + ")"
+
 """     
 if __name__ == "__main__":
     test = ('-', ('*', 'x', 2), ('/', 'x', 'x'))
