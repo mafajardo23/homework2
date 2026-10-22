@@ -45,7 +45,7 @@ train_data = data_pairs[test_data_size:]
 def mean_squared_error(tree, data_pairs):
     total = 0
     for x, y in data_pairs:
-        diff = y - traversal(tree, x)
+        diff = (y - traversal(tree, x)) / (abs(y) + 1) #divide by abs(y) in case its -1 which would then give zero.
         total += diff ** 2
         if not math.isfinite(total): #if we get a total thats not a real number  inf or nan
             total = float('inf')  #then give that tree the worst score                 total = float('inf')  #then give that tree the worst score 
